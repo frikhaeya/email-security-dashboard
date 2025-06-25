@@ -1,0 +1,10 @@
+# Authentication credentials - DO NOT COMMIT THESE!
+credentials.json
+token.json
+
+# Python virtual environment
+venv/
+__pycache__/
+
+# OS-specific files
+.DS_Store

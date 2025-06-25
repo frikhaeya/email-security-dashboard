@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- This line makes the page automatically refresh every 15 seconds -->
+    <meta http-equiv="refresh" content="15">
+    <title>Email Security Dashboard</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f0f2f5; color: #1c1e21; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        h1 { color: #1877f2; text-align: center; }
+        .alert-card { background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin-bottom: 20px; padding: 16px; border-left: 5px solid; }
+        .alert-card.data { border-color: #fa383e; } /* Red for Data Leak */
+        .alert-card.recipient { border-color: #f5a623; } /* Yellow for Suspicious Recipient */
+        .alert-header { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; }
+        .alert-details { font-size: 0.9em; line-height: 1.5; }
+        .finding { margin-left: 20px; }
+        .no-alerts { text-align: center; color: #606770; font-size: 1.2em; padding: 40px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Email Security Dashboard</h1>
+        
+        <!-- This is a loop. It will repeat for every alert found by the Python script. -->
+        {% for alert in alerts %}
+            <div class="alert-card {% if alert.type == 'Data' %}data{% else %}recipient{% endif %}">
+                <div class="alert-header">
+                    <!-- Display the type of alert -->
+                    {% if alert.type == 'Data' %}
+                        🚨 Sensitive Data Detected!
+                    {% else %}
+                        🟡 Suspicious Recipient(s) Detected!
+                    {% endif %}
+                </div>
+                <div class="alert-details">
+                    <strong>Email Subject:</strong> {{ alert.subject }}<br>
+                    {% if alert.filename %}
+                        <strong>In File:</strong> {{ alert.filename }}<br>
+                    {% endif %}
+                    <strong>Findings:</strong>
+                    <!-- Loop through the specific findings for this alert -->
+                    {% for finding in alert.findings %}
+                        <div class="finding">
+                            - <strong>{% if finding.email %}Email{% else %}Type{% endif %}:</strong> {{ finding.email or finding.type }}<br>
+                              <strong>{% if finding.reason %}Reason{% else %}Value{% endif %}:</strong> {{ finding.reason or finding.value }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <!-- This message shows if the alerts list is empty -->
+            <div class="no-alerts">
+                ✅ No alerts found yet. The system is monitoring your sent emails.
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
